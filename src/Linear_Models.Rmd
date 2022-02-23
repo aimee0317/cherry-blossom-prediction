@@ -1,0 +1,185 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r}
+library(mice)
+library(tidyverse)
+library(GGally)
+library(mctest)
+library(lme4)
+library(quantreg)
+library(AER)
+library(MASS)
+library(dplyr)
+```
+## Check NAs
+
+```{r}
+df <- read.csv("data/processed/clean.csv")  %>% dplyr::select(-c(id, location))
+summary(df)
+print(paste0('NA in Japan: '))
+colSums(is.na(df %>% filter(country=='Japan') ))
+print(paste0('NA in South Korea: '))
+colSums(is.na(df %>% filter(country=='South Korea') ))
+print(paste0('NA in Switzerland: '))
+colSums(is.na(df %>% filter(country=='Switzerland') ))
+print(paste0('NA in the United States: '))
+colSums(is.na(df[is.na(df),] %>% filter(country=='United States') ))
+```
+
+
+# Split Train and Test
+
+```{r}
+df <- df %>% na.omit
+train <- df[sort(sample(nrow(df), nrow(df)*.7)),]
+test <- df[-sort(sample(nrow(df), nrow(df)*.7)),]
+```
+
+## Fit Linear Regression
+
+```{r}
+lm <- lm(bloom_doy~lat+long+alt+tmax+tmin+prcp+agdd_winter+tmax_winter+tmin_winter+prcp_winter+co2_percapita+co2_emission, data = train) 
+summary(lm)
+
+plot(predict(lm, test), 
+     test$bloom_doy, 
+     xlab = "Predicted Values", 
+     ylab = "Observed Values", 
+     main = 'Predicted Values v.s. Observed Values of Linear Regression')
+abline(a=0, b=1, lib = 1, col = "red", lwd = 2)
+
+plot(lm) # Reference: https://rpubs.com/iabrady/residual-analysis
+```
+## Prediction Intervals
+
+The confidence interval reflects the uncertainty around the mean predictions. To display the 95% confidence intervals around the mean the predictions, specify the option interval = "confidence".
+
+For example, the 95% confidence interval associated with the first observation in the test dataset is (44.80486, 46.93825). This means that, according to our model, a tree with same parameters with the first observation has, on average, a bloom_doy between 45 and 47 ft.
+
+```{r}
+lm_confidence_intervals <- predict(lm, newdata = test, interval = "confidence")
+head(lm_confidence_intervals)
+```
+
+## Prediction Intervals
+
+The prediction interval gives uncertainty around a single value. In the same way, as the confidence intervals, the prediction intervals can be computed as follow.
+
+The 95% prediction intervals associated with the first observation in the test dataset is (29.75539, 61.98773). This means that, according to our model, 95% of trees with same parameters have bloom_doy between 30 and 62.
+
+```{r}
+lm_prediction_intervals <- predict(lm, newdata = test, interval = "prediction")
+head(lm_prediction_intervals)
+```
+
+
+## Check multicollinearity 
+
+The ‘mctest’ package in R provides the Farrar-Glauber test and other relevant tests for multicollinearity. There are two functions viz. ‘omcdiag’ and ‘imcdiag’ under ‘mctest’ package in R which will provide the overall and individual diagnostic checking for multicollinearity respectively.
+
+The calculated value of the Chi-square test statistic is found to be 53167.1312 and it is highly significant thereby implying the presence of multicollinearity in the model specification. This induces us to go for the next step of Farrar–Glauber test (F – test) for the location of the multicollinearity.
+
+```{r}
+options(scipen=999)
+X <- df %>% dplyr::select(lat, long, alt, tmax,tmin,prcp,agdd_winter,tmax_winter,tmin_winter,prcp_winter,co2_percapita,co2_emission)
+ggpairs(X)
+cor(X)
+cov(X)
+omcdiag(lm)
+```
+
+The VIF, TOL and Wi columns provide the diagnostic output for variance inflation factor, tolerance and Farrar-Glauber F-test respectively. The F-statistic for the variable ‘tmin’ is quite high ((F -value of 33.4219) followed by the variable ‘tmax_winter’ (F -value of 19.3939) and ‘tmin_winter’ (F-value of 25.7873). The degrees of freedom is (k−1,n−k) or (9, 524). For this degrees of freedom at 5% level of significance, the theoretical value of F is 1.89774. Thus, the F test shows that either the variable ‘experience’ or ‘age’ or ‘education’ will be the root cause of multicollinearity. Though the F -value for ‘education’ is also significant, it may happen due to inclusion of highly collinear variables such as ‘age’ and ‘experience’.
+Finally, for examining the pattern of multicollinearity, it is required to conduct t-test for correlation coefficient. As there are ten explanatory variables, there will be six pairs of partial correlation coefficients. In R, there are several packages for getting the partial correlation coefficients along with the t- test for checking their significance level. We’ll the ‘ppcor’ package to compute the partial correlation coefficients along with the t-statistic and corresponding p-values.
+
+```{r}
+imcdiag(lm)
+```
+
+
+## Linear Regression without Temperature as IV
+
+```{r}
+lm2 <- lm(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, data = train) 
+summary(lm2)
+
+plot(predict(lm2, test), 
+     test$bloom_doy, 
+     xlab = "Predicted Values", 
+     ylab = "Observed Values", 
+     main = 'Predicted Values v.s. Observed Values of Linear Regression')
+abline(a=0, b=1, lib = 1, col = "red", lwd = 2)
+
+plot(lm2) # Reference: https://rpubs.com/iabrady/residual-analysis
+```
+## Confidence Intervals
+
+```{r}
+lm_confidence_intervals <- predict(lm, newdata = test, interval = "confidence")
+head(lm_confidence_intervals)
+```
+
+## Prediction Intervals
+
+```{r}
+lm_prediction_intervals <- predict(lm, newdata = test, interval = "prediction")
+head(lm_prediction_intervals)
+```
+
+
+
+
+
+
+
+
+## Mix Effects Model
+
+```{r}
+suppressWarnings(suppressMessages(print(full_mixed_model <- lmer(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita
+                                                                      + (tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita | city), data = train
+))))
+summary(full_mixed_model)
+coef(full_mixed_model)$city
+```
+
+```{r}
+rq <- rq(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, data = train, tau=c(0.25, 0.5, 0.75))
+summary(rq)
+plot(rq)
+
+head(round(predict(rq, newdata = test), 0))
+```
+
+```{r}
+poisson_model <- glm(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, family = poisson, data = train)
+summary(poisson_model)
+exp(summary(poisson_model)$coef[,1])
+
+plot(predict(poisson_model, test), 
+     test$bloom_doy, 
+     xlab = "Predicted Values", 
+     ylab = "Observed Values", 
+     main = 'Predicted Values v.s. Observed Values of Linear Regression')
+abline(a=0, b=1, lib = 1, col = "red", lwd = 2)
+
+plot(poisson_model)
+```
+### Overdispersion
+
+With α=0.05, we reject H0 since the p-value<.001. Hence, the poisson_model has overdispersion.
+
+```{r}
+dispersiontest(poisson_model)
+
+quasi_poisson_model <- glm(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, family = quasipoisson, data = train)
+summary(quasi_poisson_model)
+
+negative_binomial_model <- glm.nb(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, data = train)
+summary(negative_binomial_model)
+```
