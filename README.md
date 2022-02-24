@@ -1,6 +1,6 @@
 # Cherry Blossom Prediction
 
-#### Authors: “Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao”
+#### Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao
 
 ### About
 
