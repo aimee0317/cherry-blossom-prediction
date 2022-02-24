@@ -1,0 +1,63 @@
+---
+title: "Cherry Blossom Prediction"
+author: "Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao"
+date: '2022/02/23 (updated: `r Sys.Date()`)'
+output:
+  html_document:
+    toc: yes
+  github_document:
+    toc: yes
+always_allow_html: yes
+bibliography: cherry_blossom_reference.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+library(kableExtra)
+library(tidyverse)
+library(scales)
+```
+
+```{r read_test_score, include=FALSE}
+#test_score <- read_csv("xxx") 
+``` 
+
+## Summary
+
+TBU
+
+## Introduction
+
+TBU 
+
+## Methods
+### Data Collection and Processing 
+
+TBU
+
+### Exploratory Data Analysis
+
+TBU
+
+```{r target, fig.align = 'center', echo=FALSE, fig.cap="Figure 1. Target Distribution", out.width = '40%'}
+#knitr::include_graphics("xxx")
+```
+
+      
+### Model Selection
+- Linear regression 
+- Tree based 
+- Unsupervised + SVR (optional)
+- Nueral Network (optional)
+
+TBU
+
+### Forecasting 
+TBU 
+
+## Results & Discussion
+TBU 
+
+# References
+TBU 
