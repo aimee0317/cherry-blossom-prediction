@@ -1,7 +1,7 @@
 # Cherry Blossom Prediction
 
 #### Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ## About
 
 TBU
