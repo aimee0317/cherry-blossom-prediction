@@ -25,39 +25,42 @@ library(scales)
 
 ## Summary
 
-TBU
+TBU (Amelia)
 
 ## Introduction
 
-TBU 
+Amelia
 
 ## Methods
 ### Data Collection and Processing 
 
-TBU
+Data Collection (Nick)
+Processing (Nick)
+Imputation (Amelia)
 
 ### Exploratory Data Analysis
 
-TBU
+TBU - (Alex) 
+For the weather data - treat as time series 
+For boy - regression 
 
 ```{r target, fig.align = 'center', echo=FALSE, fig.cap="Figure 1. Target Distribution", out.width = '40%'}
 #knitr::include_graphics("xxx")
 ```
 
-      
 ### Model Selection
-- Linear regression 
-- Tree based 
-- Unsupervised + SVR (optional)
-- Nueral Network (optional)
-
-TBU
+- Linear regression (Alex)
+- Tree based (Alex)
+- distance-based (Amelia)
+- Unsupervised Kmeans + SVR (Amelia)
+- Hyper parameter tuning (Alex)
 
 ### Forecasting 
-TBU 
+Weather data (nick)
 
 ## Results & Discussion
-TBU 
+results (Amelia)
+discussion (limitations - more data, try different algorithms etc.)
 
 # References
 TBU 
