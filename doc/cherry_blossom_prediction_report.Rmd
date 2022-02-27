@@ -23,20 +23,22 @@ library(scales)
 #test_score <- read_csv("xxx") 
 ``` 
 
-## Summary
+# Summary
 
 TBU (Amelia)
 
-## Introduction
+# Introduction
 
 In recent years, many studies have implemented machine learning techniques to study topics, traditionally covered by phenology models, in agronomy and forestry. In 2021, a study carried out by the Research and Innovation Centre Techniek in the Netherlands forecast the sap flow of cherry tomatoes in a greenhouse leveraging several supervised machine learning algorithms including linear models, such as linear regression (LR), least absolute shrinkage and selection operator (LASSO), elastic net regression (ENR), distance-based algorithms, such as support vector regression (SVR), and tree-based algorithms, such as random forest (RF), gradient boosting (GB) and decision tree (DT). Among all the models, Random forest performed the best, achieving an $R^2$ of $0.808$. Meanwhile, a 2020 study published in Ecological Informatics utilized an unsupervised machine learning technique, self-organizing maps (SOM), to predict peak bloom dates of Yashino cherry trees. However, the unsupervised machine learning models failed to deliver better results than a process-based phenology model did. 
 
 In our project, we built multiple supervised learning models using popular algorithms for predictions, including linear least squares with L2 regularization (Ridge), least absolute shrinkage and selection operator (LASSO), support vector regression (SVR), k-nearest neighbors (KNN), decision tree (DT), categorical boosting (CatBoost), extreme gradient boosting (XGBoost) and Light Gradient Boosting Machine (LGBM). In addition, we implemented a novel strategy and proposed a model leveraging both supervised and unsupervised learning based on K-means clustering (Kmeans) and support vector regression (SVR). After comparing the performances, we constructed a final model using xxx.        
 
-## Methods
-### Data Collection and Processing 
+# Methods
+## Data Collection and Processing 
 
-#### Data Collection (Nick)
+Before further data collection and process, we explored the original eight data sets. Here is the [file](src/EDA/EDA_original_data.pdf) for preliminary exploration, in which summary tables, density plots, time series plots, and other visualizations are conducted. We were provided with three city data sets regarding peak cherry blossom dates in Kyoto, Japan, Liestal, Switzerland, and Washington DC, US. In addition, we have three data sets containing peak cherry blossom dates in different cities of Japan, South Korea, and Switzerland. We also have two data sets from USA National Phenology Network (NPN) in terms of individual observations on the cherry blossom, intensity of the bloom, and corresponding phenometric features such as accumulated growing degree days (AGDD), average maximum and minimum temperature in winter and spring, accumulated precipitation in winter and spring, etc. Since we wanted to predict the peak bloom, instead of the individual phenometrics data set, we tried to process the status intensity data set for potential usage. We first filtered the observations by intensity value over 75%, and then selected the minimum values for the same site and year to get the earliest observation date for over 75% bloom intensity. However, we only had about 80 observations left after the process. Moreover, since we defined the peak bloom as 70% for Washington, D.C., we were unable to know the first date for over 70% bloom observation. Therefore, we did not use USA NPN data sets in our model building. However, inspired by the phenometric features in these two data sets, we used R package "rnoaa" to extract weather data for cities in other three country data sets for further model establishment, training, and prediction. 
+
+### Data Collection (Nick)
 The development of cherry blossom depends highly on geographical locations and local climate. In this project, we retrieve climate data from National Oceanic and Atmospheric Administration {rnoaa} and Carbon Dioxide emission data {owidco2andothergreenhousegasemissions}. Based on the bloom date provided by organizer, we decide to do following data wrangling.  
 
 The first step of incorporating weather data to blossom data is to find a weather station close to each city. We match them roughly by latitude and longitude. We retrieve the daily data including the max temperature, min temperature and precipitation of a day and aggregate the mean values of those three parameters by year. As most cherry blossom happens in spring time, we expecte that the weather data in winter also have high correlation with the prediction of bloom date. We aggregate these three parameters by winter. Winter is defined as December in the previous year and January and February of current year. 
@@ -45,12 +47,13 @@ Inspired by USA-NPN data, we also create Accumulated Growing Degree Day (agdd) a
 
 We want to include global warming variables into our prediction model as a warmer weather will cause the cherry to bloom earlier. We use the yearly Carbon Dioxide emission data from countries and matched them to each blossom date from cities by year.
 
-#### Processing (Nick)
+### Processing (Nick)
+
 Imputation (Amelia)
 
 We have xxx lines of missing data after applying a filter to extract all the data after the year 1950. A simplistic imputing technique that would fill in the missing data using median, mean or the most frequent values would not provide an accurate picture in our case. Each feature in the data set reflected information for each city and we had imbalanced amounts of data for each city. For instance, we had xxx lines of data for city xxx and only xxx lines of data for city xxx. Therefore, we used K-Nearest Neighbors (KNN) algorithm for missing data imputation. This imputation technique identified x rows in the data set that were similar and treated them as neighbors to impute missing values. We decided to weight each neighbor by the inverse of the distance so that the closest neighbors would have the greatest influence.         
 
-### Exploratory Data Analysis
+## Exploratory Data Analysis
 
 TBU - (Alex) 
 For the weather data - treat as time series 
@@ -60,7 +63,7 @@ For boy - regression
 #knitr::include_graphics("xxx")
 ```
 
-### Model Selection
+## Model Selection
 - Linear regression (Alex)
 - Tree based (Alex)
 - distance-based (Amelia)
@@ -74,7 +77,7 @@ To apply our model and make prediction for the coming ten years, we need to fore
 
 As for co2 data, we have granularity by year so we directly apply ARIMA on all co2 data and cast forecast till year 2031.
 
-## Results & Discussion
+# Results & Discussion
 results (Amelia)
 discussion (limitations - more data, try different algorithms etc.)
 
