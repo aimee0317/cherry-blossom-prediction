@@ -68,7 +68,9 @@ For boy - regression
 - Hyper parameter tuning (Alex)
 
 ### Forecasting 
-To apply our model and make prediction for the coming ten years, we need to forecast the weather data and co2 emission till 2031. As we have daily weather data from noaa, we fit an ARIMA model and an Exponential Smoothing model by daily granularity and aggregate them to obtain yearly forecast. To test our forecast model, we manually split the Tmax data before 2015 as training set and 2015 and after as testing set. We achieved a better result on ARIMA model, so we applied ARIMA model to the other weather data. The daily data we have by model forecasting are wrangled in the way that was mentioned in previous data processing part. 
+To apply our model and make prediction for the coming ten years, we need to forecast the weather data and co2 emission till 2031. As we have daily weather data from noaa, we fit an ARIMA model and an Exponential Smoothing model by daily granularity and aggregate them to obtain yearly forecast. To test our forecast model, we manually split the Tmax data before 2015 as training set and 2015 and after as testing set. We achieved a better result on ARIMA model, so we applied ARIMA model to the other weather data. The daily data we have by model forecasting are wrangled in the way that was mentioned in previous data processing part. The figure below shows the forecasted tmax parameter of Kyoto city compared with one year of real data.
+
+#knitr::include_graphics("../figure/tmax_extra.jpg")
 
 As for co2 data, we have granularity by year so we directly apply ARIMA on all co2 data and cast forecast till year 2031.
 
