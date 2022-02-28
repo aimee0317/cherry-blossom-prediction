@@ -4,7 +4,7 @@
 contact: amelia9@ubc.student.ca
 
 
-### About
+## About
 
 Originated in Japan, the tradition to celebrate cherry blossoms
 have been embraced by different cultures for the recent decades. In
@@ -20,7 +20,7 @@ The below figure demonstrates the workflow of our project.
 <img src="./results/workflow.jpg" alt="Workflow of the Project" width="80%" />
 
 
-### Report
+## Report
 
 The final report can be found
 [here](https://htmlpreview.github.io/?https://github.com/aimee0317/cherry-blossom-prediction/blob/main/doc/cherry_blossom_prediction_report.html).
@@ -29,7 +29,7 @@ Our codes associated with the final report can be found [here](https://github.co
 
 Our final predictions can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/cherry-predictions.csv).
 
-### Dependencies
+## Dependencies
 
 TBU A complete list of dependencies is available
 [here](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/blossom.yaml).
