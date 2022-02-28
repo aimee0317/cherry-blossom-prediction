@@ -6,7 +6,7 @@ contact: amelia9@ubc.student.ca
 
 ### About
 
-Though originated in Japan, the tradition to celebrate cherry blossoms
+Originated in Japan, the tradition to celebrate cherry blossoms
 have been embraced by different cultures for the recent decades. In
 participation in the George Mason’s Department of Statistics [cherry
 blossom peak bloom prediction competition](https://github.com/GMU-CherryBlossomCompetition/peak-bloom-prediction) and for our passion to study

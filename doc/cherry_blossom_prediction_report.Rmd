@@ -29,13 +29,13 @@ cv_score <- read_csv("../results/model_selection.csv")
 
 # Summary
 
-Though originated in Japan, the tradition to celebrate cherry blossoms have been embraced by different cultures for the recent decades. In participation in the George Mason's Department of Statistics cherry blossom peak bloom prediction competition and for our passion to study this culturally and economically important event for many cities and regions across the globe, we built multiple supervised machine learning models and a novel model combining supervised and unsupervised learning algorithms to predict the peak bloom dates of cherry trees in Kyoto, Japan, Washington DC, USA, Vancouver, Canada and Liestal, Switzerland. Figure 1 demonstrates the workflow of our project.    
+Originated in Japan, the tradition to celebrate cherry blossoms have been embraced by different cultures for the recent decades. In participation in the George Mason's Department of Statistics cherry blossom peak bloom prediction competition and for our passion to study this culturally and economically important event for many cities and regions across the globe, we built multiple supervised machine learning models and a novel model combining supervised and unsupervised learning algorithms to predict the peak bloom dates of cherry trees in Kyoto, Japan, Washington DC, USA, Vancouver, Canada and Liestal, Switzerland. Figure 1 demonstrates the workflow of our project.    
 
 ```{r workflow, warning=FALSE, fig.cap="Figure 1. Workflow of the Project", out.width="80%", fig.align = "center"}
 knitr::include_graphics("../results/workflow.jpg")
 ```
 
-Our best performing model Categorical Boosting (CatBoost) delivered a $R^2$ of $97.36%$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. Although had disappointing performance, our novel model might achieve better results if we could obtain a larger data set. We applied an ARIMA model to forecast important weather data used in the CatBoost model and performed predictions on the peak blossom dates.  
+Our best performing model Categorical Boosting (CatBoost) delivered a $R^2$ of $0.974$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. Although had disappointing performance, our novel model might achieve better results if we could obtain a larger data set. We applied an ARIMA model to forecast important weather data used in the CatBoost model and performed predictions on the peak blossom dates.  
 
 # Introduction
 
@@ -48,9 +48,9 @@ In our project, we built multiple supervised learning models using popular algor
 
 We collected the initial data sets from the George Mason's Department of Statistics cherry blossom peak bloom prediction competition's [Github repository](https://github.com/GMU-CherryBlossomCompetition/peak-bloom-prediction). The data sets contained peak cherry blossom dates in Kyoto, Liestal, Washington, DC, and other cities in Switzerland and South Korea. In addition, the Github repository provided data sets from USA National Phenology Network (USA-NPN) containing information on accumulated growing degree days (AGDD), average, maximum and minimum temperatures in winter and spring, accumulated precipitations in winter and spring for individual cherry trees located in different states in the United States. The development of cherry blossom depends highly on geographical locations and local climate [@climate]. Therefore, we extracted features from the USA-NPN data set and retrieved climate data from National Oceanic and Atmospheric Administration [@rnoaa]. 
 
-To collect the weather data, we found a weather station close to each city by roughly matching latitude and longitude and utilized the `rnoaa` package in R [@rnoaa]. We retrieved the daily data including the maximum temperatures, minimum temperatures and precipitations and calculated their average values by year. As most cherry trees would blossom in spring, we believed the weather data in winter of the previous year would be a reasonable predictor for peak cherry blossom dates. Therefore, we also included the average maximum temperatures, minimum temperatures and precipitations in winter (December in the previous year and January and February of the current year). 
+To collect the weather data, we found a weather station close to each city by roughly matching latitude and longitude and utilized the `rnoaa` package in R [@rnoaa]. We retrieved the daily data including the maximum temperatures, minimum temperatures and precipitations and calculated their average values by year. As most cherry trees would blossom in spring, we believed the weather data in winter of the previous year would be a reasonable predictor for cherry blossom peak bloom dates. Therefore, we also included the average maximum temperatures, minimum temperatures and precipitations in winter (December in the previous year and January and February of the current year). 
 
-Accumulated Growing Degree Day (AGDD) was another feature we extracted from the USA-NPN data. We calculated AGDDs using this formula: $\sum(\frac{\text{T_max}+\text{T_min}}{2} - \text{T_base})$. We assumed $\text{T_base}=0$, which was a default value provied by USA-NPN data. We used the temperature data of December from the previous year and January and February in the current year to calculate AGDDs. 
+Accumulated Growing Degree Day (AGDD) was another feature we extracted from the USA-NPN data. We calculated AGDDs using this formula: $\sum(\frac{\text{T_max}+\text{T_min}}{2} - \text{T_base})$. We assumed $\text{T_base}=0$, which was a default value provided by USA-NPN data. We used the temperature data of December from the previous year and January and February in the current year to calculate AGDDs. 
 
 In addition to the features extracted from the USA NPN data set, we included yearly Carbon Dioxide emission data for each country because the global warming had resulted in earlier cherry blossom dates in recent decades [@graham_2021]. We collected the Carbon Dioxide emission data from a research published on Our Word in Data [@owidco2andothergreenhousegasemissions]
 
@@ -82,13 +82,13 @@ knitr::include_graphics("../results/corr.png")
 
 To identify outliers in our processed data set, we plotted residuals v.s. leverage plot and did not identify any significant outliers by looking at the cook's distance.  
 
-```{r outlier, warning=FALSE, fig.cap="Figure 3. No significant outliers identified", out.width="70%", fig.align = "center"}
+```{r outlier, warning=FALSE, fig.cap="Figure 3. No significant outliers identified", out.width="50%", fig.align = "center"}
 knitr::include_graphics("../results/outlier.png")
 ```
 
 ## Models
 
-We performed a standard 70/30 random split on our data.The Python programming languages [@Python] and the following Python packages were used to perform the analysis: numpy [@2020NumPy-Array], pandas [@mckinney2010data], scikitlearn [@pedregosa2011scikit] and Catboost [@Catboost], LightBGM [@ke2017lightgbm]. The coded used to build the models can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/tree/main/src).  
+We performed a standard 70/30 random split on our data.The Python programming languages [@Python] and the following Python packages were used to perform the analysis: numpy [@2020NumPy-Array], pandas [@mckinney2010data], scikitlearn [@pedregosa2011scikit] and Catboost [@Catboost], LightBGM [@ke2017lightgbm]. The codes used to build the models can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/tree/main/src).  
 
 ### Supervised Machine Learning Models
 
@@ -133,20 +133,20 @@ cv_subset |>
 
 #### Hyperparameter Optimization
 
-Based on the cross validation results of the models mentioned above, we chose the best performing model, CatBoost regression, to perform hyperparameter optimization. We used randomized search to tune the maximum depth of the tree, the maximum number of trees that can be built, and stength of the L2 regularizer. We then built a new CatBoost regression using the returned optimized hyperparameters and performed cross validations. The model, delivering a $R^2$ of $95.4%$, a negative RMSE of $-4.629$ and MAPE of $-4.101$, did not outperform the model with default maximum depth of 6, 1000 trees and a value of 3 for the L2 regularizer. Therefore, we used the default hyperparameters to construct our final prediction model.    
+Based on the cross validation results of the models mentioned above, we chose the best performing model, CatBoost regression, to perform hyperparameter optimization. We used randomized search to tune the maximum depth of the tree, the maximum number of trees that can be built, and stength of the L2 regularizer. We then built a new CatBoost regression using the returned optimized hyperparameters and performed cross validations. The model, delivering a $R^2$ of $0.954$, a negative RMSE of $-4.629$ and MAPE of $-4.101$, did not outperform the model with default maximum depth of 6, 1000 trees and a value of 3 for the L2 regularizer. Therefore, we used the default hyperparameters to construct our final prediction model.    
 
 
 ## Forecasting 
 To apply our final model to predict peak cherry blossom date for the future ten years, we forecast the weather data and CO2 emission till 2031. As we had obtained daily weather data from the `rnoaa` package, we fit an ARIMA model and an Exponential Smoothing model by daily granularity and aggregated them to obtain yearly forecast. To test our forecast model, we manually split the maximum temperature (Tmax) data before 2015 as a training set and 2015 and after as a testing set. We achieved a better result using the ARIMA model, so we decided to apply the ARIMA model to the rest of the weather data. We wrangled the predicted daily data in the way that was mentioned in previous data processing section. The figure below shows the predicted daily tmax of Kyoto compared with one year of historical data.
 
-```{r arima, fig.cap="Figure 5. Forecasting Plot for Daily Temperature in Kyoto", message=FALSE, warning=FALSE, echo=FALSE, out.width = '50%'}
+```{r arima, fig.cap="Figure 5. Forecasting Plot for Daily Temperature in Kyoto", message=FALSE, warning=FALSE, echo=FALSE, out.width = '50%', fig.align = "center"}
 knitr::include_graphics("../results/tmax_extra.jpg")
 ```
 
 As for carbon dioxide emission data, we applied ARIMA on all yearly CO2 emission data and forecast till year 2031.
 
 # Results & Discussion
-Our best performing model Categorical Boosting (CatBoost) acheived a $R^2$ of $97.36$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. We applied the predicted weather and CO2 emission data to the model and predicted the future peak cherry blossom dates as shown in Table 2. 
+Our best performing model Categorical Boosting (CatBoost) achieved a $R^2$ of $0.974$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. We applied the predicted weather and CO2 emission data to the model and predicted the future peak cherry blossom dates as shown in Table 2. 
 
 ```{r results, message=FALSE, warning=FALSE, echo=FALSE, out.width = '90%'}
 results <- read_csv("../cherry-predictions.csv")
