@@ -33,8 +33,8 @@ library(MASS)
 library(dplyr)
 library(reshape2)
 
-df <- read.csv(file = '../data/processed/clean_data.csv')
-df_non_impute <- read.csv(file = '../data/processed/processed_data.csv')
+df <- read.csv(file = '../../data/processed/clean_data.csv')
+df_non_impute <- read.csv(file = '../../data/processed/processed_data.csv')
 ```
 
 # Data Summaries
@@ -333,7 +333,7 @@ ggarrange(all_plot, individual_plots,
 # Basic Linear Models
 
 ```{r}
-df <- read.csv("../data/processed/clean_data.csv")
+df <- read.csv("../../data/processed/clean_data.csv")
 summary(df)
 
 df <- df %>% na.omit

@@ -53,24 +53,61 @@ Imputation (Amelia)
 
 We have xxx lines of missing data after applying a filter to extract all the data after the year 1950. A simplistic imputing technique that would fill in the missing data using median, mean or the most frequent values would not provide an accurate picture in our case. Each feature in the data set reflected information for each city and we had imbalanced amounts of data for each city. For instance, we had xxx lines of data for city xxx and only xxx lines of data for city xxx. Therefore, we used K-Nearest Neighbors (KNN) algorithm for missing data imputation. This imputation technique identified x rows in the data set that were similar and treated them as neighbors to impute missing values. We decided to weight each neighbor by the inverse of the distance so that the closest neighbors would have the greatest influence.         
 
-## Exploratory Data Analysis
+## Exploratory Data Analysis (EDA) on Processed Data Sets
 
-TBU - (Alex) 
-For the weather data - treat as time series 
-For boy - regression 
+Exploratory Data Analysis (EDA) was carried out to determine the distributions of data, as well as to get hints into how features could be associated with bloom dates. In the [EDA file](src/EDA/EDA_processed_data.pdf), we created summary tables, density plots, plots of year v.s. numeric variables by countries, correlation matrix of potential independent variables, and basic linear regression models as reference. From the correlation matrix (figure 1), we can see that certain features have strong correlation with others, indicating multicollinearity. Therefore, we chose to use Lasso regression and Ridge regression in the later model establishment because these two methods can handle data with multicollinearity better. Figure 2 is the residuals v.s. leverage plot for detecting outliers. Based on the Cook's distance, we did not identify any potential outliers in our data set. 
 
-```{r target, fig.align = 'center', echo=FALSE, fig.cap="Figure 1. Target Distribution", out.width = '40%'}
-#knitr::include_graphics("xxx")
+```{r locations, warning=FALSE, fig.cap="Figure 1. Correlation Matrix of Features.", out.width="70%", fig.align = "center"}
+knitr::include_graphics("../results/corr.png")
 ```
 
-## Model Selection
-- Linear regression (Alex)
-- Tree based (Alex)
-- distance-based (Amelia)
-- Unsupervised Kmeans + SVR (Amelia)
-- Hyper parameter tuning (Alex)
 
-### Forecasting 
+```{r outlier, warning=FALSE, fig.cap="Figure 2. Residuals v.s. Leverage Plot for Detecting Outliers.", out.width="70%", fig.align = "center"}
+knitr::include_graphics("../results/outlier.png")
+```
+
+## Models
+
+We have decided to adopt regression models to predict the peak bloom date. The dependent variable would be the peak bloom day of year, and the independent variables would be latitude, longitude, annual maximum and minimum temperature, annual accumulated precipitation, annual maximum temperature in winter, annual accumulated precipitation in winter, AGDD, CO2 emission per capital, and year. The processed data was split into 70% train and 30% test data randomly. We used feature transformers and models from Python scikit-learn [NEED CITATION for sklearn] to create prediction models, train the models, conduct cross validation, and select the best performed model as the final predictive model for the peak bloom date. Codes used for model building and selection can be found [here](scr/ml_models.ipynb).
+
+### Supervised Machine Learning Models
+
+#### Linear Regressions
+
+First, we fitted the train data to Ridge regression and Lasso regression. As mentioned in the EDA part, since there is multicollinearity in the data set, we wanted regression methods that are less vulnerable towards multicollinearity. Lasso and Ridge are linear regression models with L1 and L2 regularization respectively. 
+
+#### Tree Based Machine Learning Models
+
+In addition to linear regression methods, we adopted three tree-based regressions into our model selection: decision tree, Light Gradient Boosting Machine (LGBM), and Cat Boost.
+Decision tree regressions one of the predictive modelling approaches which develops decision trees incrementally by breaking down a data set into smaller and smaller subsets.
+Both LGBM and Cat Boost algorithms are machine learning models based on gradient boosting [CITATION for gradient boosting]. Due to the sequentiality fitting of the gradient boosting, fitted trees are able to learn from mistakes made by previous trees to enhance performance. New trees are added to existing ones until the selected loss function stops to minimize.
+LGBM incorporates two techniques, gradient based on side sampling (GOSS) and exclusive feature bundling (EFB) to achieve accurate results even with a smaller data set. This algorithm excludes data with small gradients and weights more for observations with large gradients for computation on information gain [CITATION FOR LGBM https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMRegressor.html]. 
+CatBoost is a relatively new open-source machine learning algorithm developed in 2017 [NEED CITATION for cat boost https://catboost.ai/en/docs/]. Cat Boost is built on decision trees and gradient boosting. In this algorithm, a large number of weak models are sequentially combined and then selected through greedy search to form a strong prediction model. Cat Boost utilizes oblivious tree growing procedure, which increases computational efficiency and enables regularization to prevent overfitting. 
+
+#### Distance Based Machine Learning Models
+
+(Amelia)
+
+#### Hyper parameter Optimization
+
+Based on the cross validation results of the models mentioned above, we chose the best performed model, Cat Boost regression, to perform hyper parameter optimization. We used randomized search to tune the maximum depth of the tree, the maximum number of trees that can be built, and coefficient at the L2 regularization term of the cost function. We then built a new Cat Boost regression using the returned optimized hyper parameters and performed cross validation. 
+
+#### Cross Validation for Supervised Machine Learning Models
+
+Table 1 is the cross validation results for the supervised machine learning models. Based on criteria of cross validation, we chose the best performed model, Cat Boost regression with default hyper parameters, as the prediction model.
+
+```{r ml results, warning=FALSE, fig.cap="Table 1. Cross Validation for Supervised Machine Learning Models.", out.width="100%", fig.align = "center"}
+knitr::include_graphics("../results/df_results.png")
+```
+
+### Unsupervised Models
+
+#### Kmeans + SVR 
+
+(Amelia)
+
+
+## Forecasting 
 To apply our model and make prediction for the coming ten years, we need to forecast the weather data and co2 emission till 2031. As we have daily weather data from noaa, we fit an ARIMA model and an Exponential Smoothing model by daily granularity and aggregate them to obtain yearly forecast. To test our forecast model, we manually split the Tmax data before 2015 as training set and 2015 and after as testing set. We achieved a better result on ARIMA model, so we applied ARIMA model to the other weather data. The daily data we have by model forecasting are wrangled in the way that was mentioned in previous data processing part. The figure below shows the forecasted tmax parameter of Kyoto city compared with one year of real data.
 
 #knitr::include_graphics("../figure/tmax_extra.jpg")

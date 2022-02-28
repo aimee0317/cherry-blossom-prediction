@@ -24,20 +24,20 @@ library(lubridate)
 library(cowplot)
 library(ggpubr)
 
-washingtondc <- read.csv(file = '../data/raw/washingtondc.csv')
-south_korea <- read.csv(file = '../data/raw/south_korea.csv')
-kyoto <- read.csv(file = '../data/raw/kyoto.csv')
-japan <- read.csv(file = '../data/raw/japan.csv')
-liestal <- read.csv(file = '../data/raw/liestal.csv')
-meteoswiss <- read.csv(file = '../data/raw/meteoswiss.csv')
+washingtondc <- read.csv(file = '../../data/raw/washingtondc.csv')
+south_korea <- read.csv(file = '../../data/raw/south_korea.csv')
+kyoto <- read.csv(file = '../../data/raw/kyoto.csv')
+japan <- read.csv(file = '../../data/raw/japan.csv')
+liestal <- read.csv(file = '../../data/raw/liestal.csv')
+meteoswiss <- read.csv(file = '../../data/raw/meteoswiss.csv')
 USA_status_intensity <- 
-  read.csv(file = '../data/raw/USA-NPN_status_intensity_observations_data.csv') %>%
+  read.csv(file = '../../data/raw/USA-NPN_status_intensity_observations_data.csv') %>%
   filter(!State %in% c('Okinawa', 'Liaoning Sheng', 'Hyogo', 'Chongqing Shi')) %>%
   mutate(Observation_Date = mdy(Observation_Date),
          Year = format(Observation_Date, format = "%Y"),
          Date = format(Observation_Date, format = "%m-%d"))
 USA_individual_phenometrics <- 
-  read.csv(file = '../data/raw/USA-NPN_individual_phenometrics_data.csv') %>%
+  read.csv(file = '../../data/raw/USA-NPN_individual_phenometrics_data.csv') %>%
   filter(!State %in% c('Okinawa', 'Liaoning Sheng', 'Hyogo', 'Chongqing Shi'))
 ```
 
