@@ -59,7 +59,7 @@ not the `arm64` version. See
 [here](https://github.com/mwidjaja1/DSOnMacARM/blob/main/README.md) for
 more info.
 
-### References
+## References
 Amir, Amora, Marya Butt, and Olaf Van Kooten. 2021. “Using Machine Learning Algorithms to Forecast the Sap Flow of Cherry Tomatoes in a Greenhouse.” IEEE Access 9: 154183–93. https://doi.org/10.1109/ACCESS.2021.3127453.
 
 <br>Anna Veronika Dorogush, Andrey Gulin, Vasily Ershov. 2018. “CatBoost: Gradient Boosting with Categorical Features Support.” "https://arxiv.org/abs/1810.11363".
