@@ -59,32 +59,30 @@ the performances, we constructed a final model using xxx.
 ## Data Collection and Processing
 
 Before further data collection and process, we explored the original
-eight data sets. Here is the
-[file](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/src/EDA/EDA_original_data.pdf)
-for preliminary exploration, in which summary tables, density plots,
-time series plots, and other visualizations are conducted. We were
-provided with three city data sets regarding peak cherry blossom dates
-in Kyoto, Japan, Liestal, Switzerland, and Washington DC, US. In
-addition, we have three data sets containing peak cherry blossom dates
-in different cities of Japan, South Korea, and Switzerland. We also have
-two data sets from USA National Phenology Network (NPN) in terms of
-individual observations on the cherry blossom, intensity of the bloom,
-and corresponding phenometric features such as accumulated growing
-degree days (AGDD), average maximum and minimum temperature in winter
-and spring, accumulated precipitation in winter and spring, etc. Since
-we wanted to predict the peak bloom, instead of the individual
-phenometrics data set, we tried to process the status intensity data set
-for potential usage. We first filtered the observations by intensity
-value over 75%, and then selected the minimum values for the same site
-and year to get the earliest observation date for over 75% bloom
-intensity. However, we only had about 80 observations left after the
-process. Moreover, since we defined the peak bloom as 70% for
-Washington, D.C., we were unable to know the first date for over 70%
-bloom observation. Therefore, we did not use USA NPN data sets in our
-model building. However, inspired by the phenometric features in these
-two data sets, we used R package “rnoaa” to extract weather data for
-cities in other three country data sets for further model establishment,
-training, and prediction.
+eight data sets. Here is the [file](src/EDA/EDA_original_data.pdf) for
+preliminary exploration, in which summary tables, density plots, time
+series plots, and other visualizations are conducted. We were provided
+with three city data sets regarding peak cherry blossom dates in Kyoto,
+Japan, Liestal, Switzerland, and Washington DC, US. In addition, we have
+three data sets containing peak cherry blossom dates in different cities
+of Japan, South Korea, and Switzerland. We also have two data sets from
+USA National Phenology Network (NPN) in terms of individual observations
+on the cherry blossom, intensity of the bloom, and corresponding
+phenometric features such as accumulated growing degree days (AGDD),
+average maximum and minimum temperature in winter and spring,
+accumulated precipitation in winter and spring, etc. Since we wanted to
+predict the peak bloom, instead of the individual phenometrics data set,
+we tried to process the status intensity data set for potential usage.
+We first filtered the observations by intensity value over 75%, and then
+selected the minimum values for the same site and year to get the
+earliest observation date for over 75% bloom intensity. However, we only
+had about 80 observations left after the process. Moreover, since we
+defined the peak bloom as 70% for Washington, D.C., we were unable to
+know the first date for over 70% bloom observation. Therefore, we did
+not use USA NPN data sets in our model building. However, inspired by
+the phenometric features in these two data sets, we used R package
+“rnoaa” to extract weather data for cities in other three country data
+sets for further model establishment, training, and prediction.
 
 ### Data Collection (Nick)
 
@@ -140,17 +138,17 @@ neighbors would have the greatest influence.
 Exploratory Data Analysis (EDA) was carried out to determine the
 distributions of data, as well as to get hints into how features could
 be associated with bloom dates. In the [EDA
-file](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/src/EDA/EDA_processed_data.pdf),
-we created summary tables, density plots, plots of year v.s. numeric
-variables by countries, correlation matrix of potential independent
-variables, and basic linear regression models as reference. From the
-correlation matrix (figure 1), we can see that certain features have
-strong correlation with others, indicating multicollinearity. Therefore,
-we chose to use Lasso regression and Ridge regression in the later model
-establishment because these two methods can handle data with
-multicollinearity better. Figure 2 is the residuals v.s. leverage plot
-for detecting outliers. Based on the Cook’s distance, we did not
-identify any potential outliers in our data set.
+file](src/EDA/EDA_processed_data.pdf), we created summary tables,
+density plots, plots of year v.s. numeric variables by countries,
+correlation matrix of potential independent variables, and basic linear
+regression models as reference. From the correlation matrix (figure 1),
+we can see that certain features have strong correlation with others,
+indicating multicollinearity. Therefore, we chose to use Lasso
+regression and Ridge regression in the later model establishment because
+these two methods can handle data with multicollinearity better. Figure
+2 is the residuals v.s. leverage plot for detecting outliers. Based on
+the Cook’s distance, we did not identify any potential outliers in our
+data set.
 
 <img src="../results/corr.png" title="Figure 1. Correlation Matrix of Features." alt="Figure 1. Correlation Matrix of Features." width="70%" style="display: block; margin: auto;" />
 
