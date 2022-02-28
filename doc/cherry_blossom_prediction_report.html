@@ -655,10 +655,11 @@ Figure 1. Workflow of the Project
 </p>
 </div>
 <p>Our best performing model Categorical Boosting (CatBoost) delivered a
-xxxxxxxxx. Although had disappointing performance, we expected our novel
-model would achieve better results if we could obtain a larger data set.
-We applied an ARIMA model to forecast important weather data used in the
-CatBoost model and performed predictions on the peak blossom dates.</p>
+<span class="math inline">\(R^2\)</span> of <span class="math inline">\(97.36%\)</span>, a negative RMSE of <span class="math inline">\(-3.75\)</span> and a MAPE of <span class="math inline">\(3.135\)</span> on the test data. Although had
+disappointing performance, our novel model might achieve better results
+if we could obtain a larger data set. We applied an ARIMA model to
+forecast important weather data used in the CatBoost model and performed
+predictions on the peak blossom dates.</p>
 </div>
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
@@ -848,7 +849,7 @@ only few observations.</p>
 Figure 4. Some clusters have very few data points
 </p>
 </div>
-<p>Then, we trained a SVR model on each cluster to perform regression.
+<p>Then, we trained an SVR model on each cluster to perform regression.
 This novel model combining K-means and SVR delivered a negative RMSE of
 around -27. It performed worse than all the supervised algorithms we
 implemented.</p>
@@ -1057,7 +1058,7 @@ hyperparameter optimization. We used randomized search to tune the
 maximum depth of the tree, the maximum number of trees that can be
 built, and stength of the L2 regularizer. We then built a new CatBoost
 regression using the returned optimized hyperparameters and performed
-cross validations. The model, delivering a <span class="math inline">\(R^2\)</span> of 95.4%, a negative RMSE of <span class="math inline">\(-4.629\)</span> and MAPE of <span class="math inline">\(-4.101\)</span>, did not outperform the model with
+cross validations. The model, delivering a <span class="math inline">\(R^2\)</span> of <span class="math inline">\(95.4%\)</span>, a negative RMSE of <span class="math inline">\(-4.629\)</span> and MAPE of <span class="math inline">\(-4.101\)</span>, did not outperform the model with
 default maximum depth of 6, 1000 trees and a value of 3 for the L2
 regularizer. Therefore, we used the default hyperparameters to construct
 our final prediction model.</p>
@@ -1091,9 +1092,9 @@ CO2 emission data and forecast till year 2031.</p>
 <div id="results-discussion" class="section level1">
 <h1>Results &amp; Discussion</h1>
 <p>Our best performing model Categorical Boosting (CatBoost) acheived a
-test ……We applied the predicted weather and CO2 emission data to the
-model and predicted the future peak cherry blossom dates as shown in
-Table 2.</p>
+<span class="math inline">\(R^2\)</span> of <span class="math inline">\(97.36\)</span>, a negative RMSE of <span class="math inline">\(-3.75\)</span> and a MAPE of <span class="math inline">\(3.135\)</span> on the test data. We applied the
+predicted weather and CO2 emission data to the model and predicted the
+future peak cherry blossom dates as shown in Table 2.</p>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
 Table 2. Peak Cherry Blossom Forecast 2022-2031
@@ -1295,7 +1296,7 @@ performed poorly mainly because some clusters had rather few
 observations. If we could obtain a much larger data set then we might be
 able to improve its performance. We might also consider implementing
 other supervised machine learning algorithms, such as Ridge and
-CatBoost, on top of the K-mean algorithm to examined the performance of
+CatBoost, on top of the K-means algorithm to examined the performance of
 the novel model. Besides, a random grid search for hyperparameter tuning
 did not improve the performance of the default Categorical Boosting
 (CatBoost) model. If we had more computational power, we could have
