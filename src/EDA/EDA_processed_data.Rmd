@@ -1,0 +1,482 @@
+---
+title: Cherry Blossom Prediction 
+subtitle: Exploratory Data Analysis (EDA)
+author: Alex Yinan Guo
+output:
+  pdf_document:
+    toc: true
+    toc_depth: 4
+---
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+```
+
+# Setup
+
+Load packages and read in data sets.
+
+```{r setup, results=FALSE}
+library(GGally)
+library(rjson)
+library(tidyverse)
+library(lubridate)
+library(cowplot)
+library(ggpubr)
+library(knitr)
+library(mice)
+library(mctest)
+library(lme4)
+library(quantreg)
+library(AER)
+library(MASS)
+library(dplyr)
+library(reshape2)
+
+df <- read.csv(file = '../../data/processed/clean_data.csv')
+df_non_impute <- read.csv(file = '../../data/processed/processed_data.csv')
+```
+
+# Data Summaries
+
+## Before Imputation
+
+```{r}
+summary(df_non_impute)
+apply(df_non_impute, 2, function(x) length(unique(x)))
+```
+
+## Data After Imputation
+
+```{r}
+head(df)
+tail(df)
+summary(df)
+apply(df, 2, function(x) length(unique(x)))
+unique(df$country)
+```
+
+
+
+# Density Plots
+
+## Overall Density Plots
+
+```{r}
+df %>%
+  select_if(is.numeric) %>%
+  dplyr::select(-year) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=value)) + 
+  geom_density(fill='grey') +
+  facet_wrap(~name, scales='free') + 
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=5), 
+        axis.text.y = element_text(size=5), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(x ="", 
+       y = "Density",
+       title = 'Overall Density Plots') 
+```
+
+## Density Plots of Japan
+
+```{r}
+df %>%
+  filter(country=='Japan') %>%
+  select_if(is.numeric) %>%
+  dplyr::select(-year) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=value)) + 
+  geom_density(fill='grey') +
+  facet_wrap(~name, scales='free') + 
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=5), 
+        axis.text.y = element_text(size=5), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(x ="", 
+       y = "Density",
+       title = 'Density Plots of Japan') 
+```
+
+## Density Plots of South Korea
+
+```{r}
+df %>%
+  filter(country=='South Korea') %>%
+  select_if(is.numeric) %>%
+  dplyr::select(-year) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=value)) + 
+  geom_density(fill='grey') +
+  facet_wrap(~name, scales='free') + 
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=5), 
+        axis.text.y = element_text(size=5), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(x ="", 
+       y = "Density",
+       title = 'Density Plots of South Korea') 
+```
+
+## Density Plots of Switzerland
+
+```{r}
+df %>%
+  filter(country=='Switzerland') %>%
+  select_if(is.numeric) %>%
+  dplyr::select(-year) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=value)) + 
+  geom_density(fill='grey') +
+  facet_wrap(~name, scales='free') + 
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=5), 
+        axis.text.y = element_text(size=5), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(x ="", 
+       y = "Density",
+       title = 'Density Plots of Switzerland') 
+```
+
+
+## Density Plots of United States
+
+```{r}
+df %>%
+  filter(country=='United States') %>%
+  select_if(is.numeric) %>%
+  dplyr::select(-year) %>%
+  pivot_longer(everything()) %>%
+  ggplot(aes(x=value)) + 
+  geom_density(fill='grey') +
+  facet_wrap(~name, scales='free') + 
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=5), 
+        axis.text.y = element_text(size=5), 
+        plot.title = element_text(hjust = 0.5)) +
+  labs(x ="", 
+       y = "Density",
+       title = 'Density Plots of United States') 
+```
+
+# Year v.s. Numeric Variables 
+
+## Year v.s. Numeric Variables of Japan
+
+```{r}
+par(mfrow=c(3, 4))
+
+df %>%
+  filter(country=='Japan') %>%
+  select_if(is.numeric) %>%
+  pivot_longer(-c(year, lat, long, alt)) %>%
+  ggplot(aes(x=year, y=value)) + 
+  geom_point(alpha = 0.05) +
+  facet_wrap(~name, scales='free') +
+  labs(x ="", 
+       y = "",
+       title="Year v.s. Numeric Variables of Japan") + 
+  theme_light() +
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=7), 
+        axis.text.y = element_text(size=7),
+        plot.title = element_text(hjust = 0.5))
+```
+
+## Year v.s. Numeric Variables of South Korea
+
+```{r}
+par(mfrow=c(3, 4))
+
+df %>%
+  filter(country=='South Korea') %>%
+  select_if(is.numeric) %>%
+  pivot_longer(-c(year, lat, long, alt)) %>%
+  ggplot(aes(x=year, y=value)) + 
+  geom_point(alpha = 0.1) +
+  facet_wrap(~name, scales='free') +
+  labs(x ="", 
+       y = "",
+       title="Year v.s. Numeric Variables of South Korea") + 
+  theme_light() +
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=7), 
+        axis.text.y = element_text(size=7),
+        plot.title = element_text(hjust = 0.5))
+```
+
+## Year v.s. Numeric Variables of Switzerland
+
+```{r}
+par(mfrow=c(3, 4))
+
+df %>%
+  filter(country=='Switzerland') %>%
+  select_if(is.numeric) %>%
+  pivot_longer(-c(year, lat, long, alt)) %>%
+  ggplot(aes(x=year, y=value)) + 
+  geom_point(alpha = 0.1) +
+  facet_wrap(~name, scales='free') +
+  labs(x ="", 
+       y = "",
+       title="Year v.s. Numeric Variables of Switzerland") + 
+  theme_light() +
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=7), 
+        axis.text.y = element_text(size=7),
+        plot.title = element_text(hjust = 0.5))
+```
+
+## Year v.s. Numeric Variables of United States
+
+```{r}
+par(mfrow=c(3, 4))
+
+df %>%
+  filter(country=='United States') %>%
+  select_if(is.numeric) %>%
+  pivot_longer(-c(year, lat, long, alt)) %>%
+  ggplot(aes(x=year, y=value)) + 
+  geom_point(alpha = 0.1) +
+  facet_wrap(~name, scales='free') +
+  labs(x ="", 
+       y = "",
+       title="Year v.s. Numeric Variables of United States") + 
+  theme_light() +
+  theme(strip.text = element_text(size=7),
+        axis.text.x = element_text(size=7), 
+        axis.text.y = element_text(size=7),
+        plot.title = element_text(hjust = 0.5))
+```
+
+# Visualization of Data Locations
+
+```{r locations, warning=FALSE, fig.align = "center"}
+world <- map_data("world")
+all_plot <- ggplot() +
+  geom_map(
+    data = world, map = world,
+    aes(long, lat, map_id = region, fill = region),
+    color = "gray", fill = "white") +
+  geom_point(
+    data = df,
+    aes(long, lat, color=country), 
+    alpha=0.1, size=1) + 
+  guides(colour = guide_legend(override.aes = list(alpha=0.9,size=4))) + 
+  labs(title='Data Locations') + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+jp <- map_data('world', 'Japan')
+jp_plot <- ggplot() +
+  geom_map(
+    data = jp, map = jp,
+    aes(long, lat, map_id = region),
+    color = "white", fill = "white"
+  ) +
+  geom_point(
+    data = df %>% filter(country=='Japan'),
+    aes(long, lat), alpha=0.01) + 
+  ggtitle("Japan") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+swiss <- map_data('world', 'Switzerland')
+swiss_plot <- ggplot() +
+  geom_map(
+    data = swiss, map = swiss,
+    aes(long, lat, map_id = region),
+    color = "gray", fill = "white"
+  ) +
+  geom_point(
+    data = df %>% filter(country=='Switzerland'),
+    aes(long, lat), alpha=0.01) + 
+  ggtitle("Switzerland") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+sk <- map_data('world', 'South Korea')
+sk_plot <- ggplot() +
+  geom_map(
+    data = sk, map = sk,
+    aes(long, lat, map_id = region),
+    color = "white", fill = "white"
+  ) +
+  geom_point(
+    data = df %>% filter(country=='South Korea'),
+    aes(long, lat), alpha=0.01) + 
+  ggtitle("South Korea") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+usa <- map_data("state")
+usa_plot <- ggplot() +
+  geom_map(
+    data = usa, map = usa,
+    aes(long, lat, map_id = region),
+    fill = "white", size = 0.1
+  ) +
+  geom_point(
+    data = df %>% filter(country=='United States'),
+    aes(long, lat), alpha=0.1) + 
+  ggtitle("U.S.") + 
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5))
+
+individual_plots <- ggarrange(jp_plot, swiss_plot, sk_plot, usa_plot, 
+          ncol = 4, nrow = 1)
+
+ggarrange(all_plot, individual_plots, 
+          ncol = 1, nrow = 2, heights = c(2.5,1.5))
+```
+
+# Basic Linear Models
+
+```{r}
+df <- read.csv("../../data/processed/clean_data.csv")
+summary(df)
+
+df <- df %>% na.omit
+train <- df[sort(sample(nrow(df), nrow(df)*.7)),]
+test <- df[-sort(sample(nrow(df), nrow(df)*.7)),]
+```
+
+## Fit Linear Regression
+
+```{r}
+lm <- lm(bloom_doy~.-country-city-year, data = train) 
+summary(lm)
+
+plot(predict(lm, test), 
+     test$bloom_doy, 
+     xlab = "Predicted Values", 
+     ylab = "Observed Values", 
+     main = 'Predicted Values v.s. Observed Values of Linear Regression')
+abline(a=0, b=1, lib = 1, col = "red", lwd = 2)
+
+plot(lm, which = c(1,2,3,4,5)) 
+```
+
+## Confidence Intervals
+
+The confidence interval reflects the uncertainty around the mean predictions. To display the 95% confidence intervals around the mean the predictions, specify the option interval = "confidence".
+
+For example, the 95% confidence interval associated with the first observation in the test data set is (43.02558, 47.14276). This means that, according to our model, a tree with same parameters with the first observation has, on average, a bloom_doy between 43 and 47.
+
+```{r}
+lm_confidence_intervals <- predict(lm, newdata = test, interval = "confidence")
+head(lm_confidence_intervals)
+```
+
+## Prediction Intervals
+
+The prediction interval gives uncertainty around a single value. In the same way, as the confidence intervals, the prediction intervals can be computed as follow.
+
+The 95% prediction intervals associated with the first observation in the test dataset is (27.33479, 62.83354). This means that, according to our model, 95% of trees with same parameters have bloom_doy between 27 and 63.
+
+```{r}
+lm_prediction_intervals <- predict(lm, newdata = test, interval = "prediction")
+head(lm_prediction_intervals)
+```
+
+## Check multicollinearity 
+
+First we check the correlation matrix of independent variables. We found that there are serveral variables that have high correlation with each other. 
+
+```{r}
+X <- df %>% dplyr::select(-c(country, city, year, bloom_doy))
+cormat <- round(cor(X),2)
+
+reorder_cormat <- function(cormat){
+  # Use correlation between variables as distance
+  dd <- as.dist((1-cormat)/2)
+  hc <- hclust(dd)
+  cormat <-cormat[hc$order, hc$order]
+}
+
+# Get lower triangle of the correlation matrix
+get_lower_tri<-function(cormat){
+    cormat[upper.tri(cormat)] <- NA
+    return(cormat)
+}
+
+# Get upper triangle of the correlation matrix
+get_upper_tri <- function(cormat){
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+}
+
+# Reorder the correlation matrix
+cormat <- reorder_cormat(cormat)
+upper_tri <- get_upper_tri(cormat)
+# Melt the correlation matrix
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+# Create a ggheatmap
+ggheatmap <- ggplot(melted_cormat, aes(Var2, Var1, fill = value))+
+ geom_tile(color = "white")+
+ scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+   midpoint = 0, limit = c(-1,1), space = "Lab", 
+    name="Pearson\nCorrelation") +
+  theme_minimal()+ # minimal theme
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, 
+    size = 12, hjust = 1))+
+ coord_fixed() + 
+geom_text(aes(Var2, Var1, label = value), color = "black", size = 2) +
+theme(
+  axis.title.x = element_blank(),
+  axis.title.y = element_blank(),
+  panel.grid.major = element_blank(),
+  panel.border = element_blank(),
+  panel.background = element_blank(),
+  axis.ticks = element_blank(),
+  legend.justification = c(1, 0),
+  legend.position = c(0.6, 0.7),
+  legend.direction = "horizontal")+
+  guides(fill = guide_colorbar(barwidth = 7, barheight = 1,
+                title.position = "top", title.hjust = 0.5))
+# Print the heatmap
+print(ggheatmap)
+```
+
+
+The ‘mctest’ package in R provides the Farrar-Glauber test and other relevant tests for multicollinearity. Here we check the overall and individual diagnostic checking for multicollinearity respectively. The calculated value of the Chi-square test statistic is found to be 49102.7, implying the presence of multicollinearity in the model. 
+
+Next, we check Farrar–Glauber test (F-test) for the location of the multicollinearity. The VIF, TOL and Wi columns provide the diagnostic output for variance inflation factor, tolerance and Farrar-Glauber F-test respectively. Variables such as `tmin`, `tmin_winter`, and `tmax_winter` show high correlation with other features.
+
+```{r}
+options(scipen=999)
+omcdiag(lm)
+imcdiag(lm)
+```
+
+
+## Mix Effects Model
+
+```{r}
+suppressWarnings(suppressMessages(
+  print(full_mixed_model <- lmer(bloom_doy ~ tmin_winter+
+                                   prcp +
+                                   agdd_winter +
+                                   prcp_winter +
+                                   co2_percapita + 
+                                   (tmin_winter +
+                                      prcp +
+                                      agdd_winter +
+                                      prcp_winter +
+                                      co2_percapita | city), 
+                                 data = train
+                                 ))))
+summary(full_mixed_model)
+head(coef(full_mixed_model)$city)
+```
+
+```{r}
+rq <- rq(bloom_doy~tmin_winter+prcp+agdd_winter+prcp_winter+co2_percapita, 
+         data = train, 
+         tau=c(0.25, 0.5, 0.75))
+summary(rq)
+plot(rq)
+
+head(round(predict(rq, newdata = test), 0))
+```
+
