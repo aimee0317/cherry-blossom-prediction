@@ -3,13 +3,13 @@ title: "Cherry Blossom Prediction"
 author: "Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao"
 date: '2022/02/23 (updated: `r Sys.Date()`)'
 output:
-  pdf_document:
+  html_document:
     toc: yes
-  github_document:
+  pdf_document:
     toc: yes
   word_document:
     toc: yes
-  html_document:
+  github_document:
     toc: yes
 always_allow_html: yes
 bibliography: cherry_blossom_reference.bib
@@ -31,7 +31,7 @@ cv_score <- read_csv("../results/model_selection.csv")
 
 Originated in Japan, the tradition to celebrate cherry blossoms have been embraced by different cultures for the recent decades. In participation in the George Mason's Department of Statistics cherry blossom peak bloom prediction competition and for our passion to study this culturally and economically important event for many cities and regions across the globe, we built multiple supervised machine learning models and a novel model combining supervised and unsupervised learning algorithms to predict the peak bloom dates of cherry trees in Kyoto, Japan, Washington DC, USA, Vancouver, Canada and Liestal, Switzerland. Figure 1 demonstrates the workflow of our project.    
 
-```{r workflow, warning=FALSE, fig.cap="Figure 1. Workflow of the Project", out.width="80%", fig.align = "center"}
+```{r workflow, warning=FALSE, fig.cap="Workflow of the Project", out.width="80%", fig.align = "center"}
 knitr::include_graphics("../results/workflow.jpg")
 ```
 
@@ -78,13 +78,13 @@ We conducted preliminary data analysis on the initial data sets for exploration 
 
 We then conducted further analysis on the processed data set and a report can be accessed [here](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/src/EDA/EDA_processed_data.pdf). From the correlation matrix (figure 1), we identified potential multicollinearity. 
 
-```{r locations, warning=FALSE, fig.cap="Figure 2. Some features are highly correlated", out.width="70%", fig.align = "center"}
+```{r locations, warning=FALSE, fig.cap="Some features are highly correlated", out.width="70%", fig.align = "center"}
 knitr::include_graphics("../results/corr.png")
 ```
 
 To identify outliers in our processed data set, we plotted residuals v.s. leverage plot and did not identify any significant outliers by looking at the cook's distance.  
 
-```{r outlier, warning=FALSE, fig.cap="Figure 3. No significant outliers identified", out.width="50%", fig.align = "center"}
+```{r outlier, warning=FALSE, fig.cap="No significant outliers identified", out.width="50%", fig.align = "center"}
 knitr::include_graphics("../results/outlier.png")
 ```
 
@@ -124,14 +124,8 @@ Then, we trained an SVR model on each cluster to perform regression. This novel 
 #### Model Selection
 Based on the cross validation scores in Table 1, we chose the best performing model, CatBoost regression, for further hyperparameter tuning. 
 
-```{r model_comparison, message=FALSE, warning=FALSE, echo=FALSE, out.width = '90%'}
-names(cv_score)[1] <- ""
-cv_score[1, 1] <- "cv_neg_RMSE"
-
-cv_subset <- subset(cv_score, select = c(1,3,4,5,6,7,8, 9))
-cv_subset |>
-  kbl(caption = "Table 1. Tree-based models performed better than linear regressions.") |>
-  kable_styling()
+```{r model_comparison, message=FALSE, warning=FALSE, echo=FALSE, out.width = '100%', fig.cap="Tree-based models performed better than linear regressions."}
+knitr::include_graphics("../results/model_selection.png")
 ```
 
 #### Hyperparameter Optimization
@@ -142,7 +136,7 @@ Based on the cross validation results of the models mentioned above, we chose th
 ## Forecasting 
 To apply our final model to predict peak cherry blossom date for the future ten years, we forecast the weather data and CO2 emission till 2031. As we had obtained daily weather data from the `rnoaa` package, we fit an ARIMA model and an Exponential Smoothing model by daily granularity and aggregated them to obtain yearly forecast. To test our forecast model, we manually split the maximum temperature (Tmax) data before 2015 as a training set and 2015 and after as a testing set. We achieved a better result using the ARIMA model, so we decided to apply the ARIMA model to the rest of the weather data. We wrangled the predicted daily data in the way that was mentioned in previous data processing section. The figure below shows the predicted daily tmax of Kyoto compared with one year of historical data.
 
-```{r arima, fig.cap="Figure 5. Forecasting Plot for Daily Temperature in Kyoto", message=FALSE, warning=FALSE, echo=FALSE, out.width = '50%', fig.align = "center"}
+```{r arima, fig.cap="Forecasting Plot for Daily Temperature in Kyoto", message=FALSE, warning=FALSE, echo=FALSE, out.width = '50%', fig.align = "center"}
 knitr::include_graphics("../results/tmax_extra.jpg")
 ```
 
@@ -154,7 +148,7 @@ Our best performing model Categorical Boosting (CatBoost) achieved a $R^2$ of $0
 ```{r results, message=FALSE, warning=FALSE, echo=FALSE, out.width = '90%'}
 results <- read_csv("../cherry-predictions.csv")
 results |>
-  kbl(caption = "Table 2. Peak Cherry Blossom Forecast 2022-2031") |>
+  kbl(caption = "Peak Cherry Blossom Forecast 2022-2031") |>
   kable_styling()
 ```
 
