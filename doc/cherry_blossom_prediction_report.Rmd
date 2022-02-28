@@ -21,6 +21,7 @@ library(knitr)
 library(kableExtra)
 library(tidyverse)
 library(scales)
+library(cowplot)
 ```
 
 ```{r read_cv_score, include=FALSE}
@@ -58,19 +59,7 @@ In addition to the features extracted from the USA NPN data set, we included yea
 
 ### Processing 
 
-We had 6182 lines of data after applying a filter to extract all the data after the year 1950 and 711 lines contained missing data. We decided to use data after 1950 because ancient climate and environment might not be reflective of these during the recent years. A simplistic imputing technique that would fill in the missing data using median, mean or the most frequent values would not provide an accurate picture in our case. Each feature in the data set reflected information for each city and we had imbalanced amounts of data for each city. For instance, we had 141 lines of data for Kyoto and only 72 lines of data for Liestal. Therefore, we used K-Nearest Neighbors (KNN) algorithm for missing data imputation. This imputation technique identified 10 rows in the data set that were similar for each missing data point and treated them as neighbors to impute missing values. We decided to weight each neighbor by the inverse of the distance so that the closest neighbors would have the greatest influence. We selected the following variables in our processed data set for the project: 
-<br> - year 
-<br> - latitude 
-<br> - longitude
-<br> - altitude 
-<br> - maximum temperature 
-<br> - minimum temperature 
-<br> - precipitation 
-<br> - winter AGDD 
-<br> - maximum temperature in winter 
-<br> - minimum temperature in winter
-<br> - precipitation in winter 
-<br> - CO2 emission per capita 
+We had 6182 lines of data after applying a filter to extract all the data after the year 1950 and 711 lines contained missing data. We decided to use data after 1950 because ancient climate and environment might not be reflective of these during the recent years. A simplistic imputing technique that would fill in the missing data using median, mean or the most frequent values would not provide an accurate picture in our case. Each feature in the data set reflected information for each city and we had imbalanced amounts of data for each city. For instance, we had 141 lines of data for Kyoto and only 72 lines of data for Liestal. Therefore, we used K-Nearest Neighbors (KNN) algorithm for missing data imputation. This imputation technique identified 10 rows in the data set that were similar for each missing data point and treated them as neighbors to impute missing values. We decided to weight each neighbor by the inverse of the distance so that the closest neighbors would have the greatest influence. We selected the following variables in our processed data set for the project: year, latitude, longitude, altitude, maximum temperature, minimum temperature, precipitation, winter AGDD,  maximum temperature in winter, minimum temperature in winter, precipitation in winter, CO2 emission per capita.  
 
 ## Exploratory Data Analysis (EDA) 
 
@@ -105,7 +94,7 @@ In addition to linear models, we built three tree-based models utilizing decisio
 
 #### Distance-Based Models
 
-Moreover, we implemented two distance-based algorithms in our models, Support Vector Regression (SVR) and k-nearest neighbors (KNN). SVR constructs a hyperplane to seperate the training data in N dimensions to perform regressions [@9611229]. The equation is:     
+Moreover, we implemented two distance-based algorithms in our models, Support Vector Regression (SVR) and k-nearest neighbors (KNN). SVR constructs a hyperplane to separate the training data in N dimensions to perform regressions [@9611229]. The equation is:     
 
 $$f(x)=x'\beta + b$$
 
@@ -117,15 +106,21 @@ KNN measures euclidean distance to determine the similarity of data points based
 
 We proposed a novel strategy to leverage an unsupervised machine learning algorithm for the regression problem. K-means Clustering (K-means) initializes non-optimal clusters, relocates each point to its nearest center and updates clustering centers through an iterative process [@Jin2010]. We implemented kmeans on the data set and partitioned our training data into 11 clusters. Figure 4 is the 3D visualization of the 11 clusters. We observed that the clusters had imbalanced amounts of data and some had only few observations.      
 
-<img src="../results/cluster.svg">
+```{r cluster, warning=FALSE, fig.cap="3D Visualization of the Clusters", out.width="90%", fig.align = "center"}
+fig_svg<-cowplot::ggdraw()+cowplot::draw_image("../results/cluster.svg")
+plot(fig_svg)
+```
 
 Then, we trained an SVR model on each cluster to perform regression. This novel model combining K-means and SVR delivered a negative RMSE of around -27. It performed worse than all the supervised algorithms we implemented. 
 
 #### Model Selection
 Based on the cross validation scores in Table 1, we chose the best performing model, CatBoost regression, for further hyperparameter tuning. 
 
-```{r model_comparison, message=FALSE, warning=FALSE, echo=FALSE, out.width = '100%', fig.cap="Tree-based models performed better than linear regressions."}
-knitr::include_graphics("../results/model_selection.png")
+```{r model_comparison, message=FALSE, warning=FALSE, echo=FALSE, out.width = '100%', out.width = '50%', fig.cap="Tree-based models performed better than linear regressions."}
+cv_score |> 
+  select(1,3,4,5,6,7,8,9) |>
+  kbl(caption = "Performances of the Supervised Machine Learning Models") |>
+  kable_styling(latex_options = c("striped", "scale_down", "HOLD_position"))
 ```
 
 #### Hyperparameter Optimization
@@ -142,14 +137,15 @@ knitr::include_graphics("../results/tmax_extra.jpg")
 
 As for carbon dioxide emission data, we applied ARIMA on all yearly CO2 emission data and forecast till year 2031.
 
+
 # Results & Discussion
-Our best performing model Categorical Boosting (CatBoost) achieved a $R^2$ of $0.974$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. We applied the predicted weather and CO2 emission data to the model and predicted the future peak cherry blossom dates as shown in Table 2. 
+Our best performing model Categorical Boosting (CatBoost) achieved a $R^2$ of $0.974$, a negative RMSE of $-3.75$ and a MAPE of $3.135$ on the test data. We applied the predicted weather and CO2 emission data to the model and predicted the future peak cherry blossom dates as shown in Table 1. 
 
 ```{r results, message=FALSE, warning=FALSE, echo=FALSE, out.width = '90%'}
 results <- read_csv("../cherry-predictions.csv")
 results |>
   kbl(caption = "Peak Cherry Blossom Forecast 2022-2031") |>
-  kable_styling()
+  kable_styling(latex_options = "HOLD_position")
 ```
 
 
