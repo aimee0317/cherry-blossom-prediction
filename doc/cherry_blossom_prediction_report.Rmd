@@ -3,13 +3,13 @@ title: "Cherry Blossom Prediction"
 author: "Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao"
 date: '2022/02/23 (updated: `r Sys.Date()`)'
 output:
-  html_document:
+  pdf_document:
     toc: yes
   github_document:
     toc: yes
   word_document:
     toc: yes
-  pdf_document:
+  html_document:
     toc: yes
 always_allow_html: yes
 bibliography: cherry_blossom_reference.bib
@@ -44,15 +44,17 @@ In recent years, many studies have implemented machine learning techniques to st
 In our project, we built multiple supervised learning models using popular algorithms for predictions, including linear least squares with L2 regularization (Ridge), least absolute shrinkage and selection operator (LASSO), support vector regression (SVR), k-nearest neighbors (KNN), decision tree (DT), categorical boosting (CatBoost), extreme gradient boosting (XGBoost) and Light Gradient Boosting Machine (LGBM). In addition, we implemented a novel strategy and proposed a model leveraging both supervised and unsupervised learning based on K-means clustering (Kmeans) and support vector regression (SVR). After comparing the performances, we constructed a final model using categorical boosting (CatBoost).        
 
 # Methods
+
 ## Data Collection 
 
 We collected the initial data sets from the George Mason's Department of Statistics cherry blossom peak bloom prediction competition's [Github repository](https://github.com/GMU-CherryBlossomCompetition/peak-bloom-prediction). The data sets contained peak cherry blossom dates in Kyoto, Liestal, Washington, DC, and other cities in Switzerland and South Korea. In addition, the Github repository provided data sets from USA National Phenology Network (USA-NPN) containing information on accumulated growing degree days (AGDD), average, maximum and minimum temperatures in winter and spring, accumulated precipitations in winter and spring for individual cherry trees located in different states in the United States. The development of cherry blossom depends highly on geographical locations and local climate [@climate]. Therefore, we extracted features from the USA-NPN data set and retrieved climate data from National Oceanic and Atmospheric Administration [@rnoaa]. 
 
 To collect the weather data, we found a weather station close to each city by roughly matching latitude and longitude and utilized the `rnoaa` package in R [@rnoaa]. We retrieved the daily data including the maximum temperatures, minimum temperatures and precipitations and calculated their average values by year. As most cherry trees would blossom in spring, we believed the weather data in winter of the previous year would be a reasonable predictor for cherry blossom peak bloom dates. Therefore, we also included the average maximum temperatures, minimum temperatures and precipitations in winter (December in the previous year and January and February of the current year). 
 
-Accumulated Growing Degree Day (AGDD) was another feature we extracted from the USA-NPN data. We calculated AGDDs using this formula: $\sum(\frac{\text{T_max}+\text{T_min}}{2} - \text{T_base})$. We assumed $\text{T_base}=0$, which was a default value provided by USA-NPN data. We used the temperature data of December from the previous year and January and February in the current year to calculate AGDDs. 
+Accumulated Growing Degree Day (AGDD) was another feature we extracted from the USA-NPN data. We calculated AGDDs using this formula: $\sum (\frac {T_{max} + T_{min}} {2} - T_{base})$. We assumed $T_{base}=0$, which was a default value provided by USA-NPN data. We used the temperature data of December from the previous year and January and February in the current year to calculate AGDDs. 
 
-In addition to the features extracted from the USA NPN data set, we included yearly Carbon Dioxide emission data for each country because the global warming had resulted in earlier cherry blossom dates in recent decades [@graham_2021]. We collected the Carbon Dioxide emission data from a research published on Our Word in Data [@owidco2andothergreenhousegasemissions]
+In addition to the features extracted from the USA NPN data set, we included yearly carbon dioxide emission data for each country because the global warming has resulted in earlier cherry blossom dates in recent decades [@graham_2021]. We collected the carbon dioxide emission data from a research published on Our Word in Data [@owidco2andothergreenhousegasemissions].
+
 
 ### Processing 
 
@@ -104,18 +106,19 @@ In addition to linear models, we built three tree-based models utilizing decisio
 #### Distance-Based Models
 
 Moreover, we implemented two distance-based algorithms in our models, Support Vector Regression (SVR) and k-nearest neighbors (KNN). SVR constructs a hyperplane to seperate the training data in N dimensions to perform regressions [@9611229]. The equation is:     
-$\begin{equation*} f(x)=x'\beta +b\tag{5}\end{equation*}$ 
+
+$$f(x)=x'\beta + b$$
 
 KNN measures euclidean distance to determine the similarity of data points based on all features and identifies k closest points to a target point in the training data. It takes an average to decide the target point's value [@yao_ruzzo_2006]. 
 
 ### Unsupervised Machine Learning Model
+
 #### K-means + SVR 
 
 We proposed a novel strategy to leverage an unsupervised machine learning algorithm for the regression problem. K-means Clustering (K-means) initializes non-optimal clusters, relocates each point to its nearest center and updates clustering centers through an iterative process [@Jin2010]. We implemented kmeans on the data set and partitioned our training data into 11 clusters. Figure 4 is the 3D visualization of the 11 clusters. We observed that the clusters had imbalanced amounts of data and some had only few observations.      
 
-```{r kmeans, warning=FALSE, fig.cap="Figure 4. Some clusters have very few data points", out.width="60%", fig.align = "center"}
-knitr::include_graphics("../results/cluster.svg")
-```
+<img src="../results/cluster.svg">
+
 Then, we trained an SVR model on each cluster to perform regression. This novel model combining K-means and SVR delivered a negative RMSE of around -27. It performed worse than all the supervised algorithms we implemented. 
 
 #### Model Selection
