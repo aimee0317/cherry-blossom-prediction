@@ -8,8 +8,8 @@ contact: amelia9@ubc.student.ca
 
 Though originated in Japan, the tradition to celebrate cherry blossoms
 have been embraced by different cultures for the recent decades. In
-participation in the George Mason’s Department of Statistics cherry
-blossom peak bloom prediction competition and for our passion to study
+participation in the George Mason’s Department of Statistics [cherry
+blossom peak bloom prediction competition](https://github.com/GMU-CherryBlossomCompetition/peak-bloom-prediction) and for our passion to study
 this culturally and economically important event for many cities and
 regions across the globe, we built multiple supervised machine learning
 models and a novel model combining supervised and unsupervised learning
