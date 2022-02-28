@@ -27,6 +27,8 @@ The final report can be found
 
 Our codes associated with the final report can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/tree/main/src). 
 
+Our final predictions can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/cherry-predictions.csv).
+
 ### Dependencies
 
 TBU A complete list of dependencies is available
