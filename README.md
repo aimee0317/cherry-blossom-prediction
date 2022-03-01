@@ -1,7 +1,8 @@
 # Cherry Blossom Prediction :cherry_blossom:
 
 #### Authors: Amelia Tang, Alex Yinan Guo, Nick Lisheng Mao
-contact: amelia9@ubc.student.ca
+contact: amelia9@ubc.student.ca, alex.yinan.guo@gmail.com, nickmao1994@gmail.com
+<br> University of British Columbia, Master's of Data Science (MDS)
 
 
 ## About
@@ -23,7 +24,7 @@ The below figure demonstrates the workflow of our project.
 ## Report
 
 The final report can be found
-[here](https://htmlpreview.github.io/?https://github.com/aimee0317/cherry-blossom-prediction/blob/main/doc/cherry_blossom_prediction_report.html).
+[here](https://github.com/aimee0317/cherry-blossom-prediction/blob/main/doc/cherry_blossom_prediction_report.pdf).
 
 Our codes associated with the final report can be found [here](https://github.com/aimee0317/cherry-blossom-prediction/tree/main/src). 
 
